@@ -37,7 +37,7 @@
                 "interface/stlink-v2.cfg",
                 "target/stm32f2x.cfg"
             ],
-            "svdFile": "${workspaceRoot}/.vscode/STM32F303.svd",
+            "svdFile": "${workspaceRoot}/stm32f205.svd",
             "swoConfig": {
                 "enabled": true,
                 "cpuFrequency": 8000000,
