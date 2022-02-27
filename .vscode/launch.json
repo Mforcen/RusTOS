@@ -11,15 +11,23 @@
             "request": "launch",
             "name": "Debug (QEMU)",
             "servertype": "qemu",
+			"gdbPath": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.07\\bin\\arm-none-eabi-gdb.exe",
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": "Cargo Build (debug)",
+			"gdbTarget": ":50000",
             "runToMain": true,
             "executable": "./target/thumbv7m-none-eabi/debug/rus-tos",
-            /* Run `cargo build --example hello` and uncomment this line to run semi-hosting example */
-            //"executable": "./target/thumbv7m-none-eabi/debug/examples/hello",
-            "cpu": "cortex-m3",
-            "machine": "lm3s6965evb",
         },
+		{
+			"type": "cppdbg",
+			"request": "launch",
+			"name": "Debug (QEMU GDB)",
+			"miDebuggerPath": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.07\\bin\\arm-none-eabi-gdb.exe",
+			"miDebuggerServerAddress": "localhost:50000",
+			"MIMode": "gdb",
+			"targetArchitecture": "arm",
+			"cwd": "${workspaceFolder}",
+			"program": "./target/thumbv7m-none-eabi/debug/rus-tos",
+		},
         {
             /* Configuration for the STM32F303 Discovery board */
             "type": "cortex-debug",

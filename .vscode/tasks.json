@@ -59,5 +59,38 @@
             "problemMatcher": [],
             "group": "build"
         },
+		{
+			"label": "Binary dump",
+			"type": "shell",
+			"command": "arm-none-eabi-objcopy",
+			"args": [
+				"-O",
+				"binary",
+				"-S",
+				"target/thumbv7m-none-eabi/debug/rus-tos",
+				"target/thumbv7m-none-eabi/debug/rus-tos.bin"
+			],
+			"group": "build",
+			"dependsOn": "Cargo Build (debug)"
+		},
+		{
+			"label": "Launch QEMU",
+			"type": "process",
+			"command": "qemu-system-arm",
+			"args": [
+				"-machine",
+				"netduinoplus2",
+				"-cpu",
+				"cortex-m3",
+				"-gdb",
+				"tcp::50000",
+				"-S",
+				"-kernel",
+				"target/thumbv7m-none-eabi/debug/rus-tos.bin",
+				"-nographic"
+			],
+			"group": "test",
+			"dependsOn": "Binary dump"
+		},
     ]
 }
