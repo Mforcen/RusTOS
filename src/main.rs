@@ -16,14 +16,14 @@ mod allocator;
 static mut ALLOCATOR: Option<allocator::SimpleAllocator> = None;
 
 extern "C" {
-	static __sheap: u32;
+	static mut __sheap: u32;
 }
 
 
 #[entry]
 fn main() -> ! {
 	unsafe {
-		ALLOCATOR = Some(allocator::SimpleAllocator::new(&__sheap, 4096, 64));
+		ALLOCATOR = Some(allocator::SimpleAllocator::new((&mut __sheap) as *mut u32 as *mut u64, 4096, 16));
 	}
 
 	loop {
