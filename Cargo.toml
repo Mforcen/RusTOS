@@ -1,13 +1,13 @@
 [package]
 authors = ["Manuel Forcén Muñoz <manuforcen@gmail.com>"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 name = "rus-tos"
 version = "0.1.0"
 
 [dependencies]
-cortex-m = "0.6.0"
-cortex-m-rt = "0.6.10"
+cortex-m = "0.7.4"
+cortex-m-rt = "0.7.1"
 cortex-m-semihosting = "0.3.3"
 panic-halt = "0.2.0"
 
@@ -23,7 +23,7 @@ panic-halt = "0.2.0"
 
 
 [dependencies.stm32f2]
-version = "0.13.0"
+version = "0.14.0"
 features = ["stm32f215", "rt"]
 
 # this lets you use `cargo fix`!

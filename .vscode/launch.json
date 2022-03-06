@@ -11,22 +11,35 @@
             "request": "launch",
             "name": "Debug (QEMU)",
             "servertype": "qemu",
-			"gdbPath": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.07\\bin\\arm-none-eabi-gdb.exe",
+			"windows": {
+				"gdbPath": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.07\\bin\\arm-none-eabi-gdb.exe",
+			},
+			"linux": {
+				"gdbPath": "gdb-multiarch",
+			},
             "cwd": "${workspaceRoot}",
 			"gdbTarget": ":50000",
-            "runToMain": true,
+            "runToEntry": true,
             "executable": "./target/thumbv7m-none-eabi/debug/rus-tos",
+			"preLaunchTask": "Launch QEMU"
         },
 		{
 			"type": "cppdbg",
 			"request": "launch",
 			"name": "Debug (QEMU GDB)",
-			"miDebuggerPath": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.07\\bin\\arm-none-eabi-gdb.exe",
-			"miDebuggerServerAddress": "localhost:50000",
+			"linux": {
+				"miDebuggerPath": "gdb-multiarch",
+				"miDebuggerServerAddress": "localhost:50000",
+			},
+			"windows": {
+				"miDebuggerPath": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.07\\bin\\arm-none-eabi-gdb.exe",
+				"miDebuggerServerAddress": "localhost:50000",
+			},
 			"MIMode": "gdb",
 			"targetArchitecture": "arm",
 			"cwd": "${workspaceFolder}",
 			"program": "./target/thumbv7m-none-eabi/debug/rus-tos",
+			"runToEntry": true
 		},
         {
             /* Configuration for the STM32F303 Discovery board */

@@ -86,11 +86,10 @@
 				"tcp::50000",
 				"-S",
 				"-kernel",
-				"target/thumbv7m-none-eabi/debug/rus-tos.bin",
+				"target/thumbv7m-none-eabi/debug/rus-tos",
 				"-nographic"
 			],
-			"group": "test",
-			"dependsOn": "Binary dump"
+			"group": "test"
 		},
     ]
 }
