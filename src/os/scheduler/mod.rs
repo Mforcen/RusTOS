@@ -3,7 +3,6 @@ extern "C" {
 	fn load_context();
 	fn save_context();
 	fn raise_svc();
-	fn init_os();
 }
 
 

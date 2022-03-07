@@ -83,6 +83,15 @@ impl BlockHeader {
 }
 
 impl SimpleAllocator {
+	pub const fn empty() -> SimpleAllocator {
+		SimpleAllocator {
+			heap_location: 0 as *mut u64,
+			heap_size: 0,
+			heap_blocksize: 0,
+			heap_blocknum: 0,
+		}
+	}
+
 	pub unsafe fn new(heap_loc: *mut u64, heap_size: u32, heap_blocksize: u16) -> SimpleAllocator {
 		let trunc_heapsize: u32 = heap_size & (!8); // not really sure about this
 		let block_num = (heap_size/(heap_blocksize as u32)) as u16;
