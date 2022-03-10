@@ -21,9 +21,19 @@ Connection management
 6. send
 7. recv
 
+Thread management
+1. yield
+2. pause
+3. gettid
+4. spawn
+
 Memory management
 1. malloc
 2. realloc
 3. free
+4. mq_open
+5. mutex_lock
+6. mutex_unlock
+7. mutex_trylock
 
 The syscalls will follow the AAPCS specification, so the arguments of these syscalls will be put in registers R0-R3.

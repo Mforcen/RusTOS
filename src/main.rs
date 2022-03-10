@@ -1,7 +1,6 @@
 #![no_std]
 #![no_main]
 #![feature(default_alloc_error_handler)]
-#![feature(generic_const_exprs)]
 
 use panic_halt as _; // you can put a breakpoint on `rust_begin_unwind` to catch panics
 // use panic_abort as _; // requires nightly
@@ -10,7 +9,7 @@ use panic_halt as _; // you can put a breakpoint on `rust_begin_unwind` to catch
 
 extern crate alloc;
 
-use cortex_m::asm;
+
 use cortex_m_rt::entry;
 
 use stm32f2::stm32f215;

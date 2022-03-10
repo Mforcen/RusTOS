@@ -13,7 +13,7 @@ use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 
-use cc::Build;
+//use cc::Build;
 
 fn main() {
     // Put `memory.x` in our output directory and ensure it's
@@ -32,8 +32,6 @@ fn main() {
     println!("cargo:rerun-if-changed=memory.x");
 
 	// assemble the `asm.s` file
-    Build::new().file("os/asm.s").compile("asm"); // <- NEW!
-
-    // rebuild if `asm.s` changed
-    println!("cargo:rerun-if-changed=asm.s"); // <- NEW!
+    // Build::new().file("os/asm.s").compile("asm"); // <- NEW!
+    // println!("cargo:rerun-if-changed=asm.s"); // <- NEW!
 }
