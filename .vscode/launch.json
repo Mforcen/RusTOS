@@ -49,7 +49,7 @@
             "servertype": "openocd",
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "Cargo Build (debug)",
-            "runToMain": true,
+            "runToEntry": true,
             "executable": "./target/thumbv7m-none-eabi/debug/rus-tos",
             /* Run `cargo build --example itm` and uncomment this line to run itm example */
             // "executable": "./target/thumbv7em-none-eabihf/debug/examples/itm",

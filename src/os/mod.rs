@@ -23,15 +23,23 @@ unsafe fn SVCall() {
 fn waitloop() -> ! {
 	let mut counter = 0u32;
 	loop {
-		counter = peripheral::SYST::get_current();
+		unsafe {counter = scheduler::SYSTICK_VAL};
 	}
 }
 
 pub fn init_os() {
 	unsafe {
-		let mut periph = peripheral::Peripherals::take().unwrap();
-		periph.SYST.enable_interrupt();
-		periph.SYST.enable_counter();
+		{
+			let mut periph = peripheral::Peripherals::take().unwrap();
+			
+			periph.SYST.set_reload(0x0000ffff);
+
+			periph.SYST.set_clock_source(peripheral::syst::SystClkSource::Core);
+			periph.SYST.enable_interrupt();
+			periph.SYST.enable_counter();
+
+		}
+
 
 		ALLOCATOR = allocator::SimpleAllocator::new((&mut __sheap) as *mut u32 as *mut u64, 65536, 16);
 		scheduler::create_task(waitloop);
