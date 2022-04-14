@@ -59,6 +59,9 @@
                 "target/stm32f2x.cfg"
             ],
             "svdFile": "${workspaceRoot}/stm32f205.svd",
+			"linux": {
+				"gdbPath": "gdb-multiarch"
+			},
             "swoConfig": {
                 "enabled": true,
                 "cpuFrequency": 8000000,

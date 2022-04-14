@@ -1,36 +1,58 @@
 use super::thread::Static_thread;
-use alloc::boxed::Box;
 use cortex_m_rt::exception;
 use core::arch::asm;
-
-extern "C" {
-	fn switch_to_psp();
-	fn raise_svc();
-}
+use core::ptr;
 
 #[no_mangle]
 pub static mut THREAD_HEAD: *mut Static_thread = 0 as *mut Static_thread;
 pub static mut THREAD_PTR: *mut Static_thread = 0 as *mut Static_thread;
 pub static mut SYSTICK_VAL: u32 = 0;
 
-pub fn create_task(fn_ptr: fn()->!) {
-	let task = Box::<Static_thread>::into_raw(Box::new(Static_thread::new()));
-	if task == 0 as *mut Static_thread {
-		panic!("Allocation for task failed");
-	}
+pub fn create_task(fn_ptr: *const fn()->!) -> *mut Static_thread {
+	use alloc::alloc::{alloc_zeroed, Layout};
+	let task: *mut Static_thread;
 	unsafe {
+		task = alloc_zeroed(Layout::new::<Static_thread>()) as *mut Static_thread;
 		let stack = (*task).get_data().as_mut_ptr() as *mut usize;
 		*stack.offset(2036) = 0x01000000; // Last PSR
-		*stack.offset(2035) = fn_ptr as *const () as usize;
+		*stack.offset(2035) = fn_ptr as usize;
 		(*task).set_stack_ptr(stack.offset(2037-16) as *mut usize);
-	}
-
-	unsafe {
+	
 		if THREAD_HEAD != 0 as *mut Static_thread {
 			(*THREAD_HEAD).set_prev_thread(task);
 			(*task).set_next_thread(THREAD_HEAD);
 		}
 		THREAD_HEAD = task;
+	}
+	task
+}
+
+pub fn delete_task(erase_task: *mut Static_thread) {
+	use alloc::alloc::{dealloc, Layout};
+	unsafe {
+		let task = if erase_task != ptr::null_mut() {
+			erase_task
+		} else {
+			THREAD_PTR
+		};
+
+		//TODO check if erase task is a task pointer
+		if task == ptr::null_mut() {
+			return; //Should be logged or so
+		}
+
+		let prev = (*task).get_prev_thread();
+		let next = (*task).get_next_thread();
+
+		if prev != ptr::null_mut() {
+			(*prev).set_next_thread(next);
+		}
+
+		if next != ptr::null_mut() {
+			(*next).set_prev_thread(prev);
+		}
+
+		dealloc(task as *mut u8, Layout::new::<Static_thread>());
 	}
 }
 
@@ -85,7 +107,14 @@ pub unsafe fn scheduler() {
 	}
 }
 
+pub unsafe fn task_yield() {
+	save_context();
+	scheduler();
+	load_context();
+}
+
 #[exception]
 unsafe fn SysTick() {
 	SYSTICK_VAL += 1;
+	task_yield();
 }

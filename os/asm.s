@@ -15,9 +15,9 @@
 
 
 switch_to_psp:
-	ldr r0,=0x00000003
-	msr control,r0
-	isb
+	@ldr r0,=0x00000003
+	@msr control,r0
+	@isb
 	bx lr
 	.size switch_to_psp, . - switch_to_psp
 	
@@ -36,6 +36,6 @@ save_context: @; this operation will take all the registers that the CPU did not
 
 
 raise_svc:
-	svc 1
+	@svc 1
 	bx lr
 	.size raise_svc, . - raise_svc
