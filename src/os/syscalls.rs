@@ -2,6 +2,10 @@ pub const FILE_OPEN:	u32 = 0x10;
 pub const FILE_CLOSE:	u32 = 0x11;
 pub const FILE_READ:	u32 = 0x12;
 pub const FILE_WRITE:	u32 = 0x13;
+pub const FILE_STAT:	u32 = 0x14;
+pub const FILE_MKDIR:	u32 = 0x15;
+pub const FILE_RMDIR:	u32 = 0x16;
+pub const FILE_READDIR:	u32 = 0x17;
 
 pub const DEVICE_MGMT:	u32 = 0x20;
 

@@ -8,6 +8,10 @@ File management (prefix 1)
 2. close
 3. read
 4. write
+5. stat
+6. mkdir
+7. rmdir
+8. readdir
 
 Device management (prefix 2)
 1. ioctl
