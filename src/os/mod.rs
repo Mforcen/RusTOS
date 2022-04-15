@@ -5,7 +5,6 @@ mod syscalls;
 mod stack;
 
 use cortex_m::peripheral;
-use cortex_m_rt::exception;
 use core::arch::asm;
 
 #[global_allocator]
