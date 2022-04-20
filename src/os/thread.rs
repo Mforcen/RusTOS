@@ -11,24 +11,24 @@ use core::ptr;
 }*/
 
 #[repr(C)]
-pub struct Static_thread
+pub struct Thread
 {
 	name: [u8;32],
 	stack_ptr: *mut usize,
-	prev_thread: *mut Static_thread,
-	next_thread: *mut Static_thread,
-	data: [u8; 8148]
+	prev_thread: *mut Thread,
+	next_thread: *mut Thread,
+	data_head: usize
 }
 
-impl Static_thread
+impl Thread
 {
-	pub fn new() -> Static_thread {
-		Static_thread{
+	pub fn new() -> Thread {
+		Thread{
 			name: [0;32],
 			stack_ptr: 0 as *mut usize,
-			prev_thread: ptr::null_mut::<Static_thread>(),
-			next_thread: ptr::null_mut::<Static_thread>(),
-			data: [0; 8148]
+			prev_thread: ptr::null_mut::<Thread>(),
+			next_thread: ptr::null_mut::<Thread>(),
+			data_head: 0
 		}
 	}
 
@@ -44,23 +44,23 @@ impl Static_thread
 		self.stack_ptr = sptr;
 	}
 
-	pub fn get_prev_thread(&self) -> *mut Static_thread {
+	pub fn get_prev_thread(&self) -> *mut Thread {
 		self.prev_thread
 	}
 
-	pub fn set_prev_thread(&mut self, pt: *mut Static_thread) {
+	pub fn set_prev_thread(&mut self, pt: *mut Thread) {
 		self.prev_thread = pt;
 	}
 
-	pub fn get_next_thread(&self) -> *mut Static_thread {
+	pub fn get_next_thread(&self) -> *mut Thread {
 		self.next_thread
 	}
 
-	pub fn set_next_thread(&mut self, nt: *mut Static_thread) {
+	pub fn set_next_thread(&mut self, nt: *mut Thread) {
 		self.next_thread = nt;
 	}
 
-	pub fn get_data(&mut self) -> &mut [u8;8148] {
-		return &mut self.data;
+	pub fn get_data(&mut self) -> *mut usize {
+		return &mut self.data_head;
 	}
 }

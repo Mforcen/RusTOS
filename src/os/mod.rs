@@ -43,7 +43,7 @@ unsafe fn SVCall() {
 			scheduler::create_task(fn_ptr);
 		},
 		syscalls::THREAD_DEL => {
-			let fn_ptr = (*stack_ptr).r0 as *mut thread::Static_thread;
+			let fn_ptr = (*stack_ptr).r0 as *mut thread::Thread;
 			scheduler::delete_task(fn_ptr);
 			scheduler::scheduler();
 		},
