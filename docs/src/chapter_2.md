@@ -9,14 +9,13 @@ File management (prefix 1)
 3. read
 4. write
 5. stat
-6. mkdir
-7. rmdir
-8. readdir
+6. seek
+7. mkdir
+8. rmdir
+9. readdir
+10. ioctl
 
-Device management (prefix 2)
-1. ioctl
-
-Connection management (prefix 3)
+Connection management (prefix 2)
 1. socket
 2. bind
 3. listen
@@ -25,14 +24,14 @@ Connection management (prefix 3)
 6. send
 7. recv
 
-Thread management (prefix 4)
+Thread management (prefix 3)
 1. yield
 2. pause
 3. getid
 4. spawn
 5. delete
 
-Memory management (prefix 5)
+Memory management (prefix 4)
 1. malloc
 2. realloc
 3. free
