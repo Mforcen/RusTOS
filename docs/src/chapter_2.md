@@ -14,6 +14,7 @@ File management (prefix 1)
 8. rmdir
 9. readdir
 10. ioctl
+11. remove
 
 Connection management (prefix 2)
 1. socket
