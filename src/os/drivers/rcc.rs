@@ -210,30 +210,35 @@ impl RCCConfig {
 		}
 	}
 
-	pub fn get_sysclk_freq(&self) -> Option<u32> {
+	pub fn get_sysclk_freq(&self) -> u32 {
 		match self.sys_clock_src {
-			SysClockSrc::HSI => Some(16000000),
-			SysClockSrc::HSE => self.hse_freq,
+			SysClockSrc::HSI => 16000000,
+			SysClockSrc::HSE => {
+				match &self.hse_freq{
+					Some(freq) => *freq,
+					None => panic!("SysClock requires HSE")
+				}
+			},
 			SysClockSrc::PLLCLK => {
 				match &self.pll_cfg {
-					Some(cfg) => Some(cfg.get_out_freq()),
-					None => None
+					Some(cfg) => cfg.get_out_freq(),
+					None => panic!("SysClock requires PLL")
 				}
-			}
+			},
 			SysClockSrc::NotAllowed => panic!("SysClockSrc should be defined"),
 		}
 	}
 
-	pub fn get_hclk_freq(&self) -> Option<u32> {
-		self.get_sysclk_freq().map(|x| x/self.ahb_prescaler.get_divider())
+	pub fn get_hclk_freq(&self) -> u32 {
+		self.get_sysclk_freq()/self.ahb_prescaler.get_divider()
 	}
 
-	pub fn get_apb1_freq(&self) -> Option<u32> {
-		self.get_sysclk_freq().map(|x| x/self.apb1_prescaler.get_divider())
+	pub fn get_apb1_freq(&self) -> u32 {
+		self.get_sysclk_freq()/self.apb1_prescaler.get_divider()
 	}
 
-	pub fn get_apb2_freq(&self) -> Option<u32> {
-		self.get_sysclk_freq().map(|x| x/self.apb2_prescaler.get_divider())
+	pub fn get_apb2_freq(&self) -> u32 {
+		self.get_sysclk_freq()/self.apb2_prescaler.get_divider()
 	}
 }
 
