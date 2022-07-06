@@ -1,5 +1,7 @@
 use stm32f2::stm32f215;
 
+use crate::os::RCC_CONFIG;
+
 pub enum SysClockSrc {
 	HSI,
 	HSE,
@@ -79,7 +81,8 @@ pub struct PllCfg {
 }
 
 impl PllCfg {
-	pub const fn new(m: u32, n: u32, p: u32, q: u32,src: PllClockSrc) -> PllCfg {
+	// TODO change p register value for the divider
+	pub const fn new(m: u32, n: u32, p: u32, q: u32,src: PllClockSrc) -> PllCfg { 
 		let input_freq = match src {
 			PllClockSrc::HSI => 16000000,
 			PllClockSrc::HSE(freq) => freq,
@@ -104,7 +107,7 @@ impl PllCfg {
 
 		let pll_clk = n_freq / (p*2+2);
 
-		if (p > 4) | (pll_clk > 120000000) {
+		if (p > 3) | (pll_clk > 120000000) {
 			panic!("Invalid PLL p value");
 		}
 
@@ -119,7 +122,7 @@ impl PllCfg {
 			PllClockSrc::HSE(freq) => freq,
 			_ => panic!("Invalid PllClockSrc")
 		};
-		input_freq / self.m * self.n / self.p
+		input_freq / self.m * self.n / (self.p*2+2)
 	}
 }
 
@@ -248,7 +251,7 @@ pub struct RCC {}
 
 #[allow(dead_code)]
 impl RCC {
-	const PTR: *const stm32f215::rcc::RegisterBlock = stm32f215::RCC::PTR;
+	pub const PTR: *const stm32f215::rcc::RegisterBlock = stm32f215::RCC::PTR;
 
 	pub fn is_hsi_on() -> bool {
 		unsafe {
@@ -500,5 +503,9 @@ impl RCC {
 		}
 
 		Self::set_sys_source(&cfg.sys_clock_src);
+	}
+
+	pub fn get_config() -> Option<&'static RCCConfig> {
+		unsafe { RCC_CONFIG_GLOBAL }
 	}
 }

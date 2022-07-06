@@ -3,6 +3,7 @@ use stm32f2::stm32f215;
 pub trait BASE {
 	fn init(&self);
 	fn set_pin_mode(&self, num: u8, mode: u8);
+	fn set_pin_af(&self, num: u8, af: u8);
 	fn set_pin_val(&self, num: u8, level: bool);
 	fn get_pin_val(&self, num: u8) -> bool;
 }
@@ -15,11 +16,28 @@ impl BASE for stm32f215::gpioa::RegisterBlock {
 	}
 
 	fn set_pin_mode(&self, num: u8, mode: u8) {
-		let mask = 0x3 << (num*2);
+		let mask = !(0x3 << (num*2));
 		self.moder.modify(|r, w| unsafe {
-			w.bits((r.bits() & mask) | ((mode << (num*2)) as u32))
+			w.bits((r.bits() & mask) | (((mode as u32) << (num*2)) as u32))
 		})
 	}
+
+  fn set_pin_af(&self, num: u8, af: u8) {
+    if num < 8 {
+      let val = ((af & 0x0f) as u32) << num*4;
+
+      self.afrl.modify(|r, w| unsafe {
+        w.bits((r.bits()&(!(0x0f << num*4))) | val)
+      })
+    } else if num < 16 {
+      let num_h = (num-8)*4;
+      let val = ((af & 0x0f) as u32) << num_h;
+
+      self.afrh.modify(|r, w| unsafe {
+        w.bits((r.bits()&(!(0x0f << num_h))) | val)
+      })
+    }
+  }
 
 	fn set_pin_val(&self, num: u8, level: bool) {
 		let mask = if level {
@@ -50,6 +68,23 @@ impl BASE for stm32f215::gpioi::RegisterBlock {
 			w.bits((r.bits() & mask) | ((mode << (num*2)) as u32))
 		})
 	}
+
+	fn set_pin_af(&self, num: u8, af: u8) {
+		if num < 8 {
+		  let val = ((af & 0x0f) as u32) << num;
+	
+		  self.afrl.modify(|r, w| unsafe {
+			w.bits((r.bits()&(!(0x0f << num))) | val)
+		  })
+		} else if num < 16 {
+		  let num_h = num-8;
+		  let val = ((af & 0x0f) as u32) << num_h;
+	
+		  self.afrh.modify(|r, w| unsafe {
+			w.bits((r.bits()&(!(0x0f << num_h))) | val)
+		  })
+		}
+	  }
 
 	fn set_pin_val(&self, num: u8, level: bool) {
 		let mask = if level {
@@ -89,6 +124,10 @@ impl GPIO {
 
 	pub fn set_pin_mode(&self, num: u8, mode: u8) {
 		unsafe{(*self.periph).set_pin_mode(num, mode)}
+	}
+
+	pub fn set_pin_af(&self, num: u8, af: u8) {
+		unsafe{(*self.periph).set_pin_af(num, af)}
 	}
 
 	pub fn set_pin_val(&self, num: u8, level: bool) {
