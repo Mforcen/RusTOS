@@ -34,3 +34,56 @@ impl<T> VolatileCell<T>{
 		self.value.get()
 	}
 }
+
+#[macro_export]
+macro_rules! bitconfig {
+	($name:ident, $offset:literal, $bits:literal, {$($id:ident : $val:literal),*}) => {
+		#[allow(dead_code)]
+		pub enum $name {
+			$($id,)*
+		}
+
+		#[allow(dead_code)]
+		impl $name {
+			const fn get_clear_mask(&self) -> u32 {
+				let mut mask = 0;
+				let mut i = 0;
+				while i < $bits {
+					mask = mask << 1 | 1;
+					i += 1;
+				}
+				!(mask << $offset)
+			}
+
+			const fn get_bit_value(&self) -> u32 {
+				let mask = match *self {
+					$($name::$id => $val,)*
+				};
+				mask << $offset
+			}
+		}
+	};
+}
+
+#[macro_export]
+macro_rules! bitregister {
+	($name:ident, {$($fieldname:ident : $fieldtype:ident),*}) => {
+		pub struct $name {
+			$(pub $fieldname: $fieldtype,)*
+		}
+
+		impl $name {
+			pub fn get_bit_value(&self) -> u32 {
+				let mut val: u32 = 0;
+				$(val |= self.$fieldname.get_bit_value();)*
+				val
+			}
+
+			pub fn get_clear_mask(&self) -> u32 {
+				let mut free:u32 = 0;
+				$(free |= self.$fieldname.get_clear_mask();)*
+				free
+			}
+		}
+	};
+}
