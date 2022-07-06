@@ -1,6 +1,8 @@
 #![no_std]
 #![no_main]
 #![feature(default_alloc_error_handler)]
+#![feature(const_fn_trait_bound)]
+#![feature(const_mut_refs)]
 
 use panic_halt as _; // you can put a breakpoint on `rust_begin_unwind` to catch panics
 // use panic_abort as _; // requires nightly
@@ -11,8 +13,6 @@ extern crate alloc;
 
 
 use cortex_m_rt::entry;
-
-use stm32f2::stm32f215;
 
 mod os;
 
