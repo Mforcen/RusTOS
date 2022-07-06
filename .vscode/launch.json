@@ -50,24 +50,15 @@
             "executable": "./target/thumbv7m-none-eabi/debug/rus-tos",
             /* Run `cargo build --example itm` and uncomment this line to run itm example */
             // "executable": "./target/thumbv7em-none-eabihf/debug/examples/itm",
-            "device": "STM32F205RET6",
+            "device": "STM32F20x",
             "configFiles": [
                 "interface/stlink-v2.cfg",
                 "target/stm32f2x.cfg"
             ],
-            "svdFile": "${workspaceFolder}/stm32f205.svd",
+            "svdFile": "stm32f205.svd",
 			"linux": {
 				"gdbPath": "gdb-multiarch"
-			},
-            "swoConfig": {
-                "enabled": true,
-                "cpuFrequency": 8000000,
-                "swoFrequency": 2000000,
-                "source": "probe",
-                "decoders": [
-                    { "type": "console", "label": "ITM", "port": 0 }
-                ]
-            }
+			}
         }
     ]
 }
