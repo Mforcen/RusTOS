@@ -87,3 +87,40 @@ macro_rules! bitregister {
 		}
 	};
 }
+
+#[macro_export]
+macro_rules! bitfield {
+	($name:ident, $fieldname:ident, {$($field:ident : $index:literal),*}) => {
+		pub enum $fieldname {
+			$($field),*
+		}
+
+		pub struct $name(u32);
+
+		impl $name {
+			fn get(self, f: $fieldname) -> bool {
+				match f {
+					$($fieldname::$field => {
+						(self.0 & (1 << $index)) != 0
+					}),*
+				}
+			}
+
+			fn set(self, f: $fieldname) {
+				match f {
+					$($fieldname::$field => {
+						self.0 |= (1 << $index)
+					}),*
+				}
+			}
+
+			fn clear(self, f: $fieldname) {
+				match f {
+					$($fieldname::$field => {
+						self.0 &= !(1 << $index)
+					}),*
+				}
+			}
+		}
+	};
+}
