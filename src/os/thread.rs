@@ -1,4 +1,5 @@
 use core::ptr;
+use crate::bitfield;
 
 /*pub trait Thread {
 	fn get_name(&self) -> [u8; 32];
@@ -10,14 +11,39 @@ use core::ptr;
 	fn set_next_thread(&mut self, nt: *mut dyn Thread);
 }*/
 
+union ThreadNotify {
+	notify_val: u32,
+	event_groups: *const u32,
+}
+
+impl ThreadNotify {
+	pub fn new() -> ThreadNotify{
+		ThreadNotify {
+			notify_val:0
+		}
+	}
+}
+
+bitfield!(ThreadStatus, ThreadStatusFlags, {
+	WaitTime: 0,
+	WaitNotify: 1,
+	WaitEventGroup: 2,
+	WaitCallback: 3
+});
+
 #[repr(C)]
 pub struct Thread
 {
-	name: [u8;32],
-	stack_ptr: *mut usize,
-	prev_thread: *mut Thread,
-	next_thread: *mut Thread,
-	data_head: usize
+	name: [u8;32],				//Space for thread name
+	stack_ptr: *mut usize,		//Stack pointer of thread to unstack
+	prev_thread: *mut Thread,	//Previous node pointer in linked list
+	next_thread: *mut Thread,	//Next node pointer in linked list
+	id: u32,
+	state: ThreadStatus,		//Bitfield indicating some status flags
+	tick_count: u32,			//Indicates how many ticks this thread has run
+	tick_wait: u32,				//Indicates until which tick does this function has to wait
+	notify:ThreadNotify,
+	data_head: usize			//variable whose address represent the end of the stack memory
 }
 
 impl Thread
@@ -28,6 +54,11 @@ impl Thread
 			stack_ptr: 0 as *mut usize,
 			prev_thread: ptr::null_mut::<Thread>(),
 			next_thread: ptr::null_mut::<Thread>(),
+			id: 0,
+			state: 0,
+			tick_count: 0,
+			tick_wait: 0,
+			notify: ThreadNotify::new(),
 			data_head: 0
 		}
 	}
