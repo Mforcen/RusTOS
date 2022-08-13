@@ -24,11 +24,12 @@ impl ThreadNotify {
 	}
 }
 
-bitfield!(ThreadStatus, ThreadStatusFlags, {
+bitfield!(ThreadState, ThreadStateFlags, {
 	WaitTime: 0,
 	WaitNotify: 1,
 	WaitEventGroup: 2,
-	WaitCallback: 3
+	WaitCallback: 3,
+	PendingNotify: 4
 });
 
 #[repr(C)]
@@ -38,11 +39,12 @@ pub struct Thread
 	stack_ptr: *mut usize,		//Stack pointer of thread to unstack
 	prev_thread: *mut Thread,	//Previous node pointer in linked list
 	next_thread: *mut Thread,	//Next node pointer in linked list
-	id: u32,
-	state: ThreadStatus,		//Bitfield indicating some status flags
+	id: u32,					//Thread id
+	state: ThreadState,			//Bitfield indicating some status flags
 	tick_count: u32,			//Indicates how many ticks this thread has run
-	tick_wait: u32,				//Indicates until which tick does this function has to wait
-	notify:ThreadNotify,
+	wait_start: u32,			//Indicates when wait started
+	wait_count: u32,			//Indicates until which tick does this function has to wait
+	notify: ThreadNotify,		//Stores values for notification and event groups
 	data_head: usize			//variable whose address represent the end of the stack memory
 }
 
@@ -57,7 +59,8 @@ impl Thread
 			id: 0,
 			state: 0,
 			tick_count: 0,
-			tick_wait: 0,
+			wait_start: 0,
+			wait_count: 0,
 			notify: ThreadNotify::new(),
 			data_head: 0
 		}
