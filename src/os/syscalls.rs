@@ -18,9 +18,10 @@ pub const CONN_RECV:	u32 = 0x26;
 
 pub const THREAD_YIELD:	u32 = 0x30;
 pub const THREAD_PAUSE:	u32 = 0x31;
-pub const THREAD_GETID:	u32 = 0x32;
-pub const THREAD_SPAWN:	u32 = 0x33;
-pub const THREAD_DEL:	u32 = 0x34;
+pub const THREAD_WAIT:	u32 = 0x32;
+pub const THREAD_GETID:	u32 = 0x33;
+pub const THREAD_SPAWN:	u32 = 0x34;
+pub const THREAD_DEL:	u32 = 0x35;
 
 pub const MEM_ALLOC:	u32 = 0x40;
 pub const MEM_REALLOC:	u32 = 0x41;

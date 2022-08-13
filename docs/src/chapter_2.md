@@ -28,9 +28,10 @@ Connection management (prefix 2)
 Thread management (prefix 3)
 1. yield
 2. pause
-3. getid
-4. spawn
-5. delete
+3. wait
+4. getid
+5. spawn
+6. delete
 
 Memory management (prefix 4)
 1. malloc
