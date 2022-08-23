@@ -97,4 +97,8 @@ impl Thread
 	pub fn get_data(&mut self) -> *mut usize {
 		return &mut self.data_head;
 	}
+
+	pub fn get_id(&self) -> u32 {
+		return self.id;
+	}
 }
