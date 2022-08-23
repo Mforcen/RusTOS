@@ -1,4 +1,4 @@
-use super::thread::Thread;
+use super::thread::{Thread, ThreadState, ThreadStateFlags};
 use cortex_m_rt::exception;
 use core::arch::asm;
 use core::ptr;
@@ -6,6 +6,7 @@ use core::ptr;
 #[no_mangle]
 pub static mut THREAD_HEAD: *mut Thread = 0 as *mut Thread;
 pub static mut THREAD_PTR: *mut Thread = 0 as *mut Thread;
+pub static mut THREAD_LASTID: u32 = 0;
 pub static mut SYSTICK_VAL: u32 = 0;
 
 pub fn create_task(fn_ptr: *const fn()->!) -> *mut Thread {
@@ -17,6 +18,8 @@ pub fn create_task(fn_ptr: *const fn()->!) -> *mut Thread {
 		*stack.offset(2036) = 0x01000000; // Last PSR
 		*stack.offset(2035) = fn_ptr as usize;
 		(*task).set_stack_ptr(stack.offset(2037-16) as *mut usize);
+		(*task).id = THREAD_LASTID;
+		THREAD_LASTID += 1;
 	
 		if THREAD_HEAD != 0 as *mut Thread {
 			(*THREAD_HEAD).set_prev_thread(task);
@@ -92,9 +95,7 @@ pub unsafe fn load_context() { // this function retrieves r4 to r11 (register no
 	)
 }
 
-/// This function is meant to be called in Handler mode. It loads the new thread into the
-/// THREAD_PTR variable, that will be used to set the PSP value to do the context load
-pub unsafe fn scheduler() {
+unsafe fn advance_thread() {
 	if THREAD_PTR == 0 as *mut Thread {
 		THREAD_PTR = THREAD_HEAD;
 	} else {
@@ -103,6 +104,38 @@ pub unsafe fn scheduler() {
 			THREAD_PTR = thread.get_next_thread();
 		} else {
 			THREAD_PTR = THREAD_HEAD;
+		}
+	}
+}
+
+/// This function is meant to be called in Handler mode. It loads the new thread into the
+/// THREAD_PTR variable, that will be used to set the PSP value to do the context load
+pub unsafe fn scheduler() {
+	let curr_thread = THREAD_PTR;
+	loop {
+		advance_thread();
+		
+		if curr_thread == THREAD_PTR {
+			break;
+		}
+
+		let thread_state: &mut ThreadState = &mut (*curr_thread).state;
+		
+		if thread_state.get_flag(ThreadStateFlags::WaitNotify) {
+			if thread_state.get_flag(ThreadStateFlags::WaitTime) {
+				if SYSTICK_VAL-(*curr_thread).wait_start < (*curr_thread).wait_count {
+					thread_state.clear_flag(ThreadStateFlags::WaitNotify);
+					thread_state.clear_flag(ThreadStateFlags::WaitTime);
+				}
+			}
+		} else if thread_state.get_flag(ThreadStateFlags::WaitTime) {
+			if SYSTICK_VAL - (*curr_thread).time_wait < (*curr_thread).wait_count {
+				thread_state.clear_flag(ThreadStateFlags::WaitTime);
+			}
+		}
+
+		if thread_state == 0 {
+			break;
 		}
 	}
 }
