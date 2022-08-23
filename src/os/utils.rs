@@ -98,7 +98,7 @@ macro_rules! bitfield {
 		pub struct $name(u32);
 
 		impl $name {
-			fn get(self, f: $fieldname) -> bool {
+			fn get_flag(&self, f: $fieldname) -> bool {
 				match f {
 					$($fieldname::$field => {
 						(self.0 & (1 << $index)) != 0
@@ -106,7 +106,7 @@ macro_rules! bitfield {
 				}
 			}
 
-			fn set(self, f: $fieldname) {
+			fn set_flag(&mut self, f: $fieldname) {
 				match f {
 					$($fieldname::$field => {
 						self.0 |= (1 << $index)
@@ -114,7 +114,7 @@ macro_rules! bitfield {
 				}
 			}
 
-			fn clear(self, f: $fieldname) {
+			fn clear_flag(&mut self, f: $fieldname) {
 				match f {
 					$($fieldname::$field => {
 						self.0 &= !(1 << $index)
