@@ -11,7 +11,7 @@ use crate::bitfield;
 	fn set_next_thread(&mut self, nt: *mut dyn Thread);
 }*/
 
-union ThreadNotify {
+pub union ThreadNotify {
 	notify_val: u32,
 	event_groups: *const u32,
 }
@@ -39,12 +39,12 @@ pub struct Thread
 	stack_ptr: *mut usize,		//Stack pointer of thread to unstack
 	prev_thread: *mut Thread,	//Previous node pointer in linked list
 	next_thread: *mut Thread,	//Next node pointer in linked list
-	id: u32,					//Thread id
-	state: ThreadState,			//Bitfield indicating some status flags
-	tick_count: u32,			//Indicates how many ticks this thread has run
-	wait_start: u32,			//Indicates when wait started
-	wait_count: u32,			//Indicates until which tick does this function has to wait
-	notify: ThreadNotify,		//Stores values for notification and event groups
+	pub id: u32,					//Thread id
+	pub state: ThreadState,			//Bitfield indicating some status flags
+	pub tick_count: u32,			//Indicates how many ticks this thread has run
+	pub wait_start: u32,			//Indicates when wait started
+	pub wait_count: u32,			//Indicates until which tick does this function has to wait
+	pub notify: ThreadNotify,		//Stores values for notification and event groups
 	data_head: usize			//variable whose address represent the end of the stack memory
 }
 
@@ -57,7 +57,7 @@ impl Thread
 			prev_thread: ptr::null_mut::<Thread>(),
 			next_thread: ptr::null_mut::<Thread>(),
 			id: 0,
-			state: 0,
+			state: ThreadState{0: 0},
 			tick_count: 0,
 			wait_start: 0,
 			wait_count: 0,

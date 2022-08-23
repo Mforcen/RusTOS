@@ -129,12 +129,12 @@ pub unsafe fn scheduler() {
 				}
 			}
 		} else if thread_state.get_flag(ThreadStateFlags::WaitTime) {
-			if SYSTICK_VAL - (*curr_thread).time_wait < (*curr_thread).wait_count {
+			if SYSTICK_VAL - (*curr_thread).wait_start < (*curr_thread).wait_count {
 				thread_state.clear_flag(ThreadStateFlags::WaitTime);
 			}
 		}
 
-		if thread_state == 0 {
+		if thread_state.get_raw() == 0 {
 			break;
 		}
 	}
